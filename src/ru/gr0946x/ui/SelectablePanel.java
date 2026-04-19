@@ -2,6 +2,7 @@ package ru.gr0946x.ui;
 
 import ru.gr0946x.ui.painting.Painter;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -25,38 +26,41 @@ public class SelectablePanel extends PaintPanel{
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-                rect = new SelectedRect(e.getX(), e.getY());
-                paintSelectedRect();
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    super.mousePressed(e);
+                    rect = new SelectedRect(e.getX(), e.getY());
+                    paintSelectedRect();
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                paintSelectedRect();
-                for (var handler : selectHandlers) {
-                    handler.onSelect(new Rectangle(
-                            rect.getUpperLeft().x,
-                            rect.getUpperLeft().y,
-                            rect.getWidth(),
-                            rect.getHeight()
-                            )
-                    );
+                if (SwingUtilities.isLeftMouseButton(e) && rect != null) {
+                    super.mouseReleased(e);
+                    paintSelectedRect();
+                    for (var handler : selectHandlers) {
+                        handler.onSelect(new Rectangle(
+                                        rect.getUpperLeft().x,
+                                        rect.getUpperLeft().y,
+                                        rect.getWidth(),
+                                        rect.getHeight()
+                                )
+                        );
+                    }
+                    rect = null;
                 }
-                rect = null;
-
             }
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                super.mouseDragged(e);
-                paintSelectedRect();
-                if (rect != null){
+                if (SwingUtilities.isLeftMouseButton(e) && rect != null) {
+                    super.mouseDragged(e);
+                    paintSelectedRect();
                     rect.setLastPoint(e.getX(), e.getY());
+                    paintSelectedRect();
                 }
-                paintSelectedRect();
             }
         });
 
@@ -70,7 +74,7 @@ public class SelectablePanel extends PaintPanel{
     }
 
     private void paintSelectedRect(){
-        if (g != null){
+        if (g != null && rect != null){
             g.setXORMode(Color.WHITE);
             g.setColor(Color.BLACK);
             g.drawRect(

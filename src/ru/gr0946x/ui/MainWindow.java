@@ -35,6 +35,9 @@ public class MainWindow extends JFrame {
         });
         mainPanel = new SelectablePanel(painter);
         mainPanel.setBackground(Color.WHITE);
+
+        new RightClickDrag(mainPanel, conv);
+
         mainPanel.addSelectListener((r) -> {
             var xMin = conv.xScr2Crt(r.x);
             var xMax = conv.xScr2Crt(r.x + r.width);
@@ -44,6 +47,49 @@ public class MainWindow extends JFrame {
             conv.setYShape(yMin, yMax);
             mainPanel.repaint();
         });
+
+        // Масштабирование колесиком мыши
+        mainPanel.addMouseWheelListener(e -> {
+            int rotation = e.getWheelRotation();
+
+            double factor;
+            if (rotation < 0) {
+                factor = 0.8;
+            } else {
+                factor = 1.2;
+            }
+
+            // Получаем текущие границы
+            double xMin = conv.xScr2Crt(0);
+            double xMax = conv.xScr2Crt(mainPanel.getWidth());
+            double yMin = conv.yScr2Crt(mainPanel.getHeight());
+            double yMax = conv.yScr2Crt(0);
+
+            // Координаты мыши
+            double mouseX = conv.xScr2Crt(e.getX());
+            double mouseY = conv.yScr2Crt(e.getY());
+
+            // Новые размеры
+            double newWidth = (xMax - xMin) * factor;
+            double newHeight = (yMax - yMin) * factor;
+
+            // Вычисляем, где находится мышь относительно границ
+            double tX = (mouseX - xMin) / (xMax - xMin);
+            double tY = (mouseY - yMin) / (yMax - yMin);
+
+            // Масштабируем относительно позиции мыши
+            double newXMin = mouseX - newWidth * tX;
+            double newXMax = mouseX + newWidth * (1 - tX);
+            double newYMin = mouseY - newHeight * tY;
+            double newYMax = mouseY + newHeight * (1 - tY);
+
+            // Устанавливаем новые границы
+            conv.setXShape(newXMin, newXMax);
+            conv.setYShape(newYMin, newYMax);
+
+            mainPanel.repaint();
+        });
+
         setContent();
     }
 
