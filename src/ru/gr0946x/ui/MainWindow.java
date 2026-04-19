@@ -5,7 +5,6 @@ import ru.gr0946x.ui.fractals.Fractal;
 import ru.gr0946x.ui.fractals.Mandelbrot;
 import ru.gr0946x.ui.painting.FractalPainter;
 import ru.gr0946x.ui.painting.Painter;
-import ru.gr0946x.ui.RightClickDrag;
 
 import javax.swing.*;
 import java.awt.*;

@@ -48,7 +48,7 @@ public class RightClickDrag {
                     double worldHeight = yMax - yMin;
 
                     double dxWorld = dx * (worldWidth / width);
-                    double dyWorld = dy * (worldHeight / height);
+                    double dyWorld = -dy * (worldHeight / height);
 
                     // Сдвигаем границы
                     converter.setXShape(xMin - dxWorld, xMax - dxWorld);
