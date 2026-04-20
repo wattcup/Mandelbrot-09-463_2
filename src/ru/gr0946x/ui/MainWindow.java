@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import static java.lang.Math.*;
+import static ru.gr0946x.ui.FractalState.saveCurrentState;
 
 public class MainWindow extends JFrame {
 
@@ -40,7 +41,7 @@ public class MainWindow extends JFrame {
         new RightClickDrag(mainPanel, conv);
 
         mainPanel.addSelectListener((r) -> {
-            saveCurrentState();
+            FractalState.saveCurrentState(conv, history);
             var xMin = conv.xScr2Crt(r.x);
             var xMax = conv.xScr2Crt(r.x + r.width);
             var yMin = conv.yScr2Crt(r.y + r.height);
@@ -51,7 +52,7 @@ public class MainWindow extends JFrame {
         });
 
         mainPanel.addMouseWheelListener(e -> {
-            saveCurrentState();
+            FractalState.saveCurrentState(conv, history);
             int rotation = e.getWheelRotation();
 
             double factor;
@@ -92,7 +93,7 @@ public class MainWindow extends JFrame {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
                 if (e.isControlDown() && e.getKeyCode() == java.awt.event.KeyEvent.VK_Z) {
-                    undo();
+                    FractalState.undo(conv, history, mainPanel);
                 }
             }
         });
@@ -111,25 +112,5 @@ public class MainWindow extends JFrame {
                 .addComponent(mainPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
                 .addGap(8)
         );
-    }
-    private void saveCurrentState() {
-        if (history.size() >= 100) {
-            history.removeFirst();
-        }
-        history.addLast(new FractalState(
-                conv.xScr2Crt(0),
-                conv.xScr2Crt(mainPanel.getWidth()),
-                conv.yScr2Crt(mainPanel.getHeight()),
-                conv.yScr2Crt(0)
-        ));
-    }
-
-    private void undo() {
-        if (!history.isEmpty()) {
-            FractalState lastState = history.removeLast();
-            conv.setXShape(lastState.xMin, lastState.xMax);
-            conv.setYShape(lastState.yMin, lastState.yMax);
-            mainPanel.repaint();
-        }
     }
 }
