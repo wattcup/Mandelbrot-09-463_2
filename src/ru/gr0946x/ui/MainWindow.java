@@ -40,6 +40,7 @@ public class MainWindow extends JFrame {
         new RightClickDrag(mainPanel, conv);
 
         mainPanel.addSelectListener((r) -> {
+            saveCurrentState();
             var xMin = conv.xScr2Crt(r.x);
             var xMax = conv.xScr2Crt(r.x + r.width);
             var yMin = conv.yScr2Crt(r.y + r.height);
@@ -50,6 +51,7 @@ public class MainWindow extends JFrame {
         });
 
         mainPanel.addMouseWheelListener(e -> {
+            saveCurrentState();
             int rotation = e.getWheelRotation();
 
             double factor;
@@ -85,8 +87,15 @@ public class MainWindow extends JFrame {
         });
 
         setContent();
-
-
+        mainPanel.setFocusable(true);
+        mainPanel.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.isControlDown() && e.getKeyCode() == java.awt.event.KeyEvent.VK_Z) {
+                    undo();
+                }
+            }
+        });
     }
 
     private void setContent() {
