@@ -3,14 +3,13 @@ package ru.gr0946x.ui;
 import ru.gr0946x.Converter;
 import ru.gr0946x.ui.fractals.Fractal;
 import ru.gr0946x.ui.fractals.Mandelbrot;
-import ru.gr0946x.ui.painting.FractalPainter;
+import ru.gr0946x.ui.painting.MultiThreadFractalPainter;  // ← Импорт
 import ru.gr0946x.ui.painting.Painter;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static java.lang.Math.*;
-import static ru.gr0946x.ui.FractalState.saveCurrentState;
 
 public class MainWindow extends JFrame {
 
@@ -31,6 +30,7 @@ public class MainWindow extends JFrame {
     public void updateConverter(Converter newConv) {
         this.conv.setXShape(newConv.getXMin(), newConv.getXMax());
         this.conv.setYShape(newConv.getYMin(), newConv.getYMax());
+        painter.refresh();
     }
 
     public MainWindow() {
@@ -41,13 +41,15 @@ public class MainWindow extends JFrame {
 
         mandelbrot = new Mandelbrot();
         conv = new Converter(-2.0, 1.0, -1.0, 1.0);
-        painter = new FractalPainter(mandelbrot, conv, (value) -> {
+
+        painter = new MultiThreadFractalPainter(mandelbrot, conv, (value) -> {
             if (value == 1.0) return Color.BLACK;
             var r = (float) abs(sin(5 * value));
             var g = (float) abs(cos(8 * value) * sin(3 * value));
             var b = (float) abs((sin(7 * value) + cos(15 * value)) / 2f);
             return new Color(r, g, b);
         });
+
         mainPanel = new SelectablePanel(painter);
         mainPanel.setBackground(Color.WHITE);
 
@@ -61,6 +63,7 @@ public class MainWindow extends JFrame {
             var yMax = conv.yScr2Crt(r.y);
             conv.setXShape(xMin, xMax);
             conv.setYShape(yMin, yMax);
+            painter.refresh();
             mainPanel.repaint();
         });
 
@@ -96,7 +99,7 @@ public class MainWindow extends JFrame {
 
             conv.setXShape(newXMin, newXMax);
             conv.setYShape(newYMin, newYMax);
-
+            painter.refresh();
             mainPanel.repaint();
         });
 
@@ -107,6 +110,7 @@ public class MainWindow extends JFrame {
             public void keyPressed(java.awt.event.KeyEvent e) {
                 if (e.isControlDown() && e.getKeyCode() == java.awt.event.KeyEvent.VK_Z) {
                     FractalState.undo(conv, history, mainPanel);
+                    painter.refresh();
                 }
             }
         });
