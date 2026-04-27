@@ -8,6 +8,7 @@ import ru.gr0946x.ui.fractals.Fractal;
 import ru.gr0946x.ui.fractals.Mandelbrot;
 import ru.gr0946x.ui.painting.MultiThreadFractalPainter;
 import ru.gr0946x.ui.painting.Painter;
+import ru.gr0946x.ui.AspectRatioManager;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -50,6 +51,15 @@ public class AnimationWindow extends JFrame {
 
         mainPanel = new SelectablePanel(painter);
         mainPanel.setBackground(Color.WHITE);
+
+        mainPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                AspectRatioManager.fitToPanel(conv, mainPanel.getWidth(), mainPanel.getHeight());
+                painter.refresh();
+                mainPanel.repaint();
+            }
+        });
 
         new RightClickDrag(mainPanel, conv, painter);
 
@@ -147,36 +157,9 @@ public class AnimationWindow extends JFrame {
         mainPanel.addMouseWheelListener(e -> {
             FractalState.saveCurrentState(conv, history);
             int rotation = e.getWheelRotation();
-
-            double factor;
-            if (rotation < 0) {
-                factor = 0.8;
-            } else {
-                factor = 1.2;
-            }
-
-            double xMin = conv.xScr2Crt(0);
-            double xMax = conv.xScr2Crt(mainPanel.getWidth());
-            double yMin = conv.yScr2Crt(mainPanel.getHeight());
-            double yMax = conv.yScr2Crt(0);
-
-            double mouseX = conv.xScr2Crt(e.getX());
-            double mouseY = conv.yScr2Crt(e.getY());
-
-            double newWidth = (xMax - xMin) * factor;
-            double newHeight = (yMax - yMin) * factor;
-
-            double tX = (mouseX - xMin) / (xMax - xMin);
-            double tY = (mouseY - yMin) / (yMax - yMin);
-
-            double newXMin = mouseX - newWidth * tX;
-            double newXMax = mouseX + newWidth * (1 - tX);
-            double newYMin = mouseY - newHeight * tY;
-            double newYMax = mouseY + newHeight * (1 - tY);
-
-            conv.setXShape(newXMin, newXMax);
-            conv.setYShape(newYMin, newYMax);
-
+            double factor = (rotation < 0) ? 0.8 : 1.2; // 0.8 – увеличение, 1.2 – уменьшение
+            AspectRatioManager.zoomWithAspect(conv, mainPanel.getWidth(), mainPanel.getHeight(),
+                    factor, e.getX(), e.getY());
             painter.refresh();
             painter.updateIterations(getCurrentZoom());
             mainPanel.repaint();
