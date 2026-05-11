@@ -19,7 +19,7 @@ public class JuliaWindow extends JFrame {
 
         Julia julia = new Julia(cRe, cIm);
         Converter conv = new Converter(-2.0, 2.0, -2.0, 2.0);
-        Painter painter = new MultiThreadFractalPainter(julia, conv, colorFunction);
+        Painter painter = new MultiThreadFractalPainter((x, y) -> julia.inSetProbability(x, y), conv, colorFunction);
 
         PaintPanel panel = new PaintPanel(painter);
         panel.setBackground(Color.BLACK);
