@@ -15,7 +15,7 @@ public class MainWindow extends JFrame {
 
     private final SelectablePanel mainPanel;
     private final Painter painter;
-    private final Fractal mandelbrot;
+    private final Mandelbrot mandelbrot;
     private final Converter conv;
     private final java.util.ArrayDeque<FractalState> history = new java.util.ArrayDeque<>();
 
@@ -42,7 +42,7 @@ public class MainWindow extends JFrame {
         mandelbrot = new Mandelbrot();
         conv = new Converter(-2.0, 1.0, -1.0, 1.0);
 
-        painter = new MultiThreadFractalPainter(mandelbrot, conv, (value) -> {
+        painter = new MultiThreadFractalPainter((x, y) -> mandelbrot.inSetProbability(x, y), conv, (value) ->  {
             if (value == 1.0) return Color.BLACK;
             var r = (float) abs(sin(5 * value));
             var g = (float) abs(cos(8 * value) * sin(3 * value));
@@ -76,7 +76,7 @@ public class MainWindow extends JFrame {
             conv.setYShape(yMin, yMax);
             AspectRatioManager.fitToPanel(conv, mainPanel.getWidth(), mainPanel.getHeight());
             painter.refresh();
-            painter.updateIterations(getCurrentZoom());
+            mandelbrot.updateIterations(getCurrentZoom());
             mainPanel.repaint();
         });
 
@@ -87,7 +87,7 @@ public class MainWindow extends JFrame {
             AspectRatioManager.zoomWithAspect(conv, mainPanel.getWidth(), mainPanel.getHeight(),
                     factor, e.getX(), e.getY());
             painter.refresh();
-            painter.updateIterations(getCurrentZoom());
+            mandelbrot.updateIterations(getCurrentZoom());
             mainPanel.repaint();
         });
 
@@ -119,7 +119,7 @@ public class MainWindow extends JFrame {
             public void keyPressed(java.awt.event.KeyEvent e) {
                 if (e.isControlDown() && e.getKeyCode() == java.awt.event.KeyEvent.VK_Z) {
                     FractalState.undo(conv, history, mainPanel);
-                    painter.updateIterations(getCurrentZoom());
+                    mandelbrot.updateIterations(getCurrentZoom());
                     painter.refresh();
                 }
             }

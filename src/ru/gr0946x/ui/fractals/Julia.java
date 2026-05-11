@@ -26,7 +26,4 @@ public class Julia implements Fractal {
         return (float) i / maxIterations;
     }
 
-    @Override
-    public void updateIterations(double zoomLevel) {
-    }
 }
