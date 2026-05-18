@@ -41,13 +41,7 @@ public class AnimationWindow extends JFrame {
 
         mandelbrot = new Mandelbrot();
         conv = new Converter(-2.0, 1.0, -1.0, 1.0);
-        painter = new MultiThreadFractalPainter((x, y) -> mandelbrot.inSetProbability(x, y), conv, (value) -> {
-            if (value == 1.0) return Color.BLACK;
-            var r = (float) abs(sin(5 * value));
-            var g = (float) abs(cos(8 * value) * sin(3 * value));
-            var b = (float) abs((sin(7 * value) + cos(15 * value)) / 2f);
-            return new Color(r, g, b);
-        });
+        painter = new MultiThreadFractalPainter((x, y) -> mandelbrot.inSetProbability(x, y), conv, new ru.gr0946x.ui.fractals.DefaultColorScheme());
 
         mainPanel = new SelectablePanel(painter);
         mainPanel.setBackground(Color.WHITE);

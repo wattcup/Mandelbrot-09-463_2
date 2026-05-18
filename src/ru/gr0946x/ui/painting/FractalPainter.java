@@ -10,7 +10,7 @@ public class FractalPainter implements Painter{
 
     private final Fractal fractal;
     private final Converter conv;
-    private final ColorFunction colorFunction;
+    private ColorFunction colorFunction;
     @Override
     public int getWidth() {
         return conv.getWidth();

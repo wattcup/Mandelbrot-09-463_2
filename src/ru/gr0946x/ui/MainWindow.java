@@ -95,17 +95,18 @@ public class MainWindow extends JFrame {
         mainPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (javax.swing.SwingUtilities.isLeftMouseButton(e)) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
                     double cRe = conv.xScr2Crt(e.getX());
                     double cIm = conv.yScr2Crt(e.getY());
 
-                    javax.swing.SwingUtilities.invokeLater(() -> {
+
+                    SwingUtilities.invokeLater(() -> {
                         new JuliaWindow(cRe, cIm, (value) -> {
-                            if (value == 1.0) return java.awt.Color.BLACK;
+                            if (value == 1.0) return Color.BLACK;
                             float r = (float) Math.abs(Math.sin(5 * value));
                             float g = (float) Math.abs(Math.cos(8 * value) * Math.sin(3 * value));
                             float b = (float) Math.abs((Math.sin(7 * value) + Math.cos(15 * value)) / 2f);
-                            return new java.awt.Color(r, g, b);
+                            return new Color(r, g, b);
                         });
                     });
                 }

@@ -12,7 +12,7 @@ public class MultiThreadFractalPainter implements Painter {
 
     private final Fractal fractal;
     private final Converter conv;
-    private final ColorFunction colorFunction;
+    private ColorFunction colorFunction;
     private final int threadCount;
 
     private BufferedImage cachedImage;
@@ -137,5 +137,12 @@ public class MultiThreadFractalPainter implements Painter {
             }
         }
         return pixels;
+    }
+
+
+    @Override
+    public void setColorFunction(ColorFunction cf) {
+        this.colorFunction = cf;
+        refresh(); // Сбрасываем кэш, чтобы перерисовать
     }
 }
