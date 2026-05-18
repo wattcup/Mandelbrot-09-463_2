@@ -51,7 +51,4 @@ public class FractalPainter implements Painter{
             }
         }
     }
-    public void updateIterations(double zoomLevel) {
-        fractal.updateIterations(zoomLevel);
-    }
 }
