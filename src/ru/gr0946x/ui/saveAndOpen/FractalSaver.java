@@ -80,8 +80,8 @@ public class FractalSaver {
 
     private static SaveFormat getSelectedFormat(JFileChooser fileChooser) {
         var filter = fileChooser.getFileFilter();
-        if (filter instanceof javax.swing.filechooser.FileNameExtensionFilter) {
-            String[] exts = ((javax.swing.filechooser.FileNameExtensionFilter) filter).getExtensions();
+        if (filter instanceof FileNameExtensionFilter) {
+            String[] exts = ((FileNameExtensionFilter) filter).getExtensions();
             if (exts != null && exts.length > 0) {
                 String ext = exts[0].toLowerCase();
                 switch (ext) {

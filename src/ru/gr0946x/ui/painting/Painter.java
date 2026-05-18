@@ -11,4 +11,6 @@ public interface Painter {
 
     void paint(Graphics g);
     default void refresh() {}
+    default void setColorFunction(ru.gr0946x.ui.fractals.ColorFunction cf) {}
+
 }
